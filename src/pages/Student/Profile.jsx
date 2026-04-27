@@ -120,6 +120,24 @@ export default function ProfilePage({ user, setUser, showNotif }) {
               {user?.email} • {user?.role === "teacher" ? "Teacher" : "Student"}
             </p>
 
+            <div
+              style={{
+                marginBottom: "24px",
+                padding: "14px 16px",
+                borderRadius: "14px",
+                background: "#111",
+                border: "1px solid var(--border)",
+              }}
+            >
+              <div style={{ fontSize: "0.85rem", color: "var(--muted)", marginBottom: "6px" }}>Current plan</div>
+              <div style={{ fontWeight: "700", color: "white" }}>{user?.currentPlan || "No active plan"}</div>
+              {(user?.planPrice || user?.paymentMethod || user?.planStatus) && (
+                <div style={{ color: "var(--muted)", fontSize: "0.92rem", marginTop: "6px" }}>
+                  {[user?.planPrice, user?.paymentMethod, user?.planStatus].filter(Boolean).join(" • ")}
+                </div>
+              )}
+            </div>
+
             <div style={{ display: "grid", gap: "14px" }}>
               <input
                 type="text"

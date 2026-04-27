@@ -3,6 +3,7 @@ import axios from "axios";
 const API_URL = "http://localhost:5000/api";
 const CURRENT_USER_KEY = "qkz_current";
 const PROFILE_OVERRIDES_KEY = "qkz_profile_overrides";
+const TEACHER_PLAN_IDS = ["teacher-pro", "school-business"];
 
 export const getUsers = async () => {
   try {
@@ -54,6 +55,18 @@ export const setCurrentUser = (user) => {
 
 export const clearCurrentUser = () => localStorage.removeItem(CURRENT_USER_KEY);
 
+export const hasTeacherAccess = (user) => {
+  if (!user) {
+    return false;
+  }
+
+  if (user.role === "teacher") {
+    return true;
+  }
+
+  return TEACHER_PLAN_IDS.includes(user.currentPlanId) && user.planStatus === "Active";
+};
+
 export const saveUserProfile = (user, updates) => {
   if (!user?.email) {
     return user;
@@ -77,6 +90,8 @@ export const saveUserProfile = (user, updates) => {
   };
 
   overrides[user.email] = {
+    ...currentOverride,
+    ...updates,
     name: nextUser.name,
     avatar: nextUser.avatar || "",
     previousNames: nextUser.previousNames,

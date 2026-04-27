@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { APP_NAME, NAV_LINKS } from "../data/constants";
 
-export default function Navbar({ page, setPage, user, onLogout }) {
+export default function Navbar({ page, setPage, user, canAccessTeacherPanel, onLogout }) {
   // Мүмкіндіктер бөлімінде тұрғанымызды қадағалау үшін стейт
   const [isFeaturesActive, setIsFeaturesActive] = useState(false);
 
@@ -86,7 +86,7 @@ export default function Navbar({ page, setPage, user, onLogout }) {
           })}
 
           {/* Мұғалім панелі */}
-          {user?.role === "teacher" && (
+          {canAccessTeacherPanel && (
             <a 
               href="#" 
               onClick={(e) => { e.preventDefault(); setPage("teacher"); }} 

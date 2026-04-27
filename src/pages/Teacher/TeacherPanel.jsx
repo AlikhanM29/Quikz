@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { getQuizzes, saveQuizzes, getResults } from "../../utils/storage";
 import * as XLSX from 'xlsx';
 
-export default function TeacherPage() {
+export default function TeacherPage({ user }) {
   const [tab, setTab] = useState("create");
   // Мәліметтерді сақтайтын стейттер
   const [results, setResults] = useState([]); 
@@ -23,6 +23,17 @@ export default function TeacherPage() {
       result?.total !== null &&
       result?.total !== undefined
   );
+  const teacherIdentifier = user?.email || user?.id || user?.name || "";
+  const teacherQuizzes = quizzes.filter((quiz) => {
+    const quizTeacherIdentifier =
+      quiz?.teacherEmail || quiz?.teacherId || quiz?.teacherName || "";
+
+    if (teacherIdentifier && quizTeacherIdentifier) {
+      return quizTeacherIdentifier === teacherIdentifier;
+    }
+
+    return false;
+  });
 
   // ПАРАҚША АШЫЛҒАНДА МӘЛІМЕТТЕРДІ СЕРВЕРДЕН АЛУ
   useEffect(() => {
@@ -75,6 +86,9 @@ export default function TeacherPage() {
 
     const newQuiz = {
       title: testTitle,
+      teacherId: user?.id || null,
+      teacherName: user?.name || "",
+      teacherEmail: user?.email || "",
       questions: [
         {
           question: questionText,
@@ -130,6 +144,35 @@ export default function TeacherPage() {
 
       {/* Main Content */}
       <div className="teacher-content" style={{ flex: 1, padding: '50px 80px', overflowY: 'auto' }}>
+        {tab === "home" && (
+          <div>
+            <h1 style={{ fontSize: '2.8rem', fontWeight: '800', marginBottom: '16px' }}>Басты бет</h1>
+            <p style={{ color: '#888', marginBottom: '32px' }}>Мұнда сіз жасаған тесттер көрсетіледі.</p>
+
+            {teacherQuizzes.length > 0 ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                {teacherQuizzes.map((quiz, index) => (
+                  <div
+                    key={quiz.id || `${quiz.title}-${index}`}
+                    style={{ background: '#111', border: '1px solid #222', borderRadius: '16px', padding: '24px' }}
+                  >
+                    <div style={{ color: '#00ff00', fontSize: '0.9rem', marginBottom: '12px' }}>
+                      Тест #{index + 1}
+                    </div>
+                    <h3 style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{quiz.title || 'Атаусыз тест'}</h3>
+                    <p style={{ color: '#888', margin: 0 }}>
+                      Сұрақ саны: {Array.isArray(quiz.questions) ? quiz.questions.length : 0}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '16px', padding: '28px', color: '#666' }}>
+                Сіз жасаған тесттер әлі жоқ.
+              </div>
+            )}
+          </div>
+        )}
         
         {tab === "create" && (
           <div style={{ maxWidth: '800px' }}>
