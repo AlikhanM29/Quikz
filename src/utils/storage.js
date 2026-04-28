@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+// Өзгертілген жер: Vercel-дегі айнымалыны қолданады, болмаса localhost-қа жүгінеді
+const API_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api` 
+  : "http://localhost:5000/api";
+
 const CURRENT_USER_KEY = "qkz_current";
 const PROFILE_OVERRIDES_KEY = "qkz_profile_overrides";
 const TEACHER_PLAN_IDS = ["teacher-pro", "school-business"];
